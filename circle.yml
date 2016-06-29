@@ -27,5 +27,14 @@ test:
         - cp -r app/build/outputs $CIRCLE_ARTIFACTS
         
 test:
+  pre:
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+    - circle-android wait-for-boot
+        
+test:
   override:
     - adb install path/to/build.apk
+    
+
