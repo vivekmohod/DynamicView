@@ -1,19 +1,14 @@
-dependencies:
-    override:
-        - gem install sass compass:
-            timeout: 600
-        - npm install:
-            timeout: 600
-    post:
-        - chmod 755 ./node_modules/nightwatch-commands/selenium/drivers/chromedriver:
-            timeout: 10
-
 test:
-    pre:
-        - grunt preview:
-            background: true
-            timeout: 120
-        - sleep 5
-    override:
-        - grunt nightwatch:
-            timeout: 600
+  override:
+    # start the emulator
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+    # wait for it to have booted
+    - circle-android wait-for-boot
+    # run tests  against the emulator.
+    - ./gradlew connectedAndroidTest
+    # copy the build outputs to artifacts
+    - cp -r my-project/build/outputs $CIRCLE_ARTIFACTS
+    # copy the test results to the test results directory.
+    - cp -r my-project/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
