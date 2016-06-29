@@ -7,6 +7,13 @@
 general:
     artifacts:
         - /home/ubuntu/AndroidCI/app/build/outputs/apk/
+        
+test:
+  pre:
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+    - circle-android wait-for-boot
 
 machine:
     environment:
@@ -26,12 +33,7 @@ test:
         - ./gradlew assemble
         - cp -r app/build/outputs $CIRCLE_ARTIFACTS
         
-test:
-  pre:
-    - emulator -avd circleci-android22 -no-audio -no-window:
-        background: true
-        parallel: true
-    - circle-android wait-for-boot
+
         
 test:
   override:
