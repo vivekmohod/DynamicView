@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="edit_text_style" parent="@android:style/TextAppearance">
+        <item name="android:background">@drawable/text_field</item>
+        <item name="android:textColorHint">@color/hint_gray_light</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sp12</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:cursorVisible">true</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingLeft">@dimen/dp8</item>
+    </style>
+
+    <style name="text_view_h1_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+<!--    <style name="text_view_h1_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:paddingLeft">@dimen/dp8</item>
+    </style>-->
+
+    <style name="text_view_h2_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/blue_base</item>
+        <item name="android:textSize">@dimen/sp12</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:paddingLeft">@dimen/dp8</item>
+    </style>
+
+    <style name="radio_btn_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">@dimen/sp12</item>
+        <item name="android:typeface">monospace</item>
+
+    </style>
+
+    <style name="btn_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:typeface">monospace</item>
+
+    </style>
+
+    <style name="mandatory_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#ffff0f0f</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="textview_primary_label_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">@dimen/sp14</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="textview_secondary_label_style" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#ffff0f0f</item>
+        <item name="android:textSize">@dimen/sp12</item>
+        <item name="android:typeface">monospace</item>
+
+    </style>
+
+</resources>
