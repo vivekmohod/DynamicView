@@ -40,6 +40,10 @@ android {
         all*.exclude module: 'slf4j-api-1.7.12'
     }
 
+    adbOptions {
+        timeOutInMs 600000
+    }
+
 }
 
 
