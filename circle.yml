@@ -14,6 +14,11 @@ test:
         background: true
         parallel: true
     - circle-android wait-for-boot
+    
+test:
+    override:
+    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedAndroidTest
+        timeout: 360
 
 machine:
     environment:
