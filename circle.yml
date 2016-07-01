@@ -27,8 +27,8 @@ test:
     - adb shell settings put global animator_duration_scale 0
 
   override:
-    - ./gradlew createMockDebugCoverageReport
-    - ./gradlew test
+    - ./gradlew assemble
+        - cp -r app/build/outputs $CIRCLE_ARTIFACTS
 
   post:
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
