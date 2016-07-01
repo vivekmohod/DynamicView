@@ -4,7 +4,6 @@ machine:
 
 dependencies:
   pre:
-    - echo $GOOGLE_SERVICES_JSON > app/google-services.json
     - android list sdk --extended
     - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
     - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.3"
