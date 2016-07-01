@@ -1,47 +1,39 @@
-#
-# Build configuration for Circle CI
-#
-# See this thread for speeding up and caching directories: https://discuss.circleci.com/t/installing-android-build-tools-23-0-2/924
-#
+machine:
+   environment:
+     ANDROID_HOME: /usr/local/android-sdk-linux
 
-general:
-    artifacts:
-        - /home/ubuntu/AndroidCI/app/build/outputs/apk/
-        
+dependencies:
+  pre:
+    - touch app/google-services.json
+    - echo $GOOGLE_SERVICES_JSON > app/google-services.json
+    - android list sdk --extended
+    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.3"
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
+
 test:
   pre:
-    - emulator -avd circleci-android22 -no-audio -no-window:
+    - android list targets
+    - echo no | android create avd -n emulatorwithgoogleapi22 -t 9 --abi google_apis/armeabi-v7a
+    - echo 'vm.heapSize=512' >> ~/.android/avd/emulatorwithgoogleapi22.ini
+    - echo 'hw.ramSize=1024' >> ~/.android/avd/emulatorwithgoogleapi22.ini
+    - cat ~/.android/avd/emulatorwithgoogleapi22.ini
+    - emulator -avd emulatorwithgoogleapi22 -no-audio -no-window :
         background: true
         parallel: true
     - circle-android wait-for-boot
-    
-test:
-    override:
-    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedAndroidTest
+    - adb shell input keyevent 82
+    - adb shell svc power stayon true
+    - adb shell settings put global window_animation_scale 0
+    - adb shell settings put global transition_animation_scale 0
+    - adb shell settings put global animator_duration_scale 0
 
-
-machine:
-    environment:
-        ANDROID_HOME: /usr/local/android-sdk-linux
-
-
-dependencies:
-    pre:
-        - echo y | android update sdk --no-ui --all --filter tools,platform-tools,extra-google-m2repository,extra-google-google_play_services,extra-android-support,android-23
-        - echo y | android update sdk --no-ui --all --filter build-tools-23.0.3
-    cache_directories:
-        - /usr/local/android-sdk-linux/tools
-        - /usr/local/android-sdk-linux/build-tools/23.0.3
-
-test:
-    override:
-        - ./gradlew assemble
-        - cp -r app/build/outputs $CIRCLE_ARTIFACTS
-        
-
-        
-test:
   override:
-    - adb install path/to/build.apk
-    
+    - ./gradlew createMockDebugCoverageReport
+    - ./gradlew test
 
+  post:
+    - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+    - cp -r app/build/outputs/androidTest-results/ $CIRCLE_TEST_REPORTS
+    - cp -r app/build/reports/coverage/ $CIRCLE_TEST_REPORTS
+    - cp -r app/build/test-results/mockDebug/ $CIRCLE_TEST_REPORTS
