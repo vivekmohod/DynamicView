@@ -1,73 +1,37 @@
-## Customize the test machine
-machine:
+achine:
+   environment:
+     ANDROID_HOME: /usr/local/android-sdk-linux
 
-  timezone:
-    America/Los_Angeles # Set the timezone
-
-  # Version of ruby to use
-  ruby:
-    version:
-      1.8.7-p358-falcon-perf
-
-  # Override /etc/hosts
-  hosts:
-    circlehost: 127.0.0.1
-    dev.mycompany.com: 127.0.0.1
-
-  # Add some environment variables
-  environment:
-    CIRCLE_ENV: test
-    DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
-
-## Customize checkout
-checkout:
-  post:
-    - git submodule sync
-    - git submodule update --init # use submodules
-
-## Customize dependencies
 dependencies:
   pre:
-    - npm install coffeescript # install from a different package manager
-    - gem uninstall bundler # use a custom version of bundler
-    - gem install bundler --pre
+    - android list sdk --extended
+    - echo y | android update sdk --no-ui --all --filter "tools,platform-tools,android-23"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.3"
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
 
-  override:
-    - bundle install: # note ':' here
-        timeout: 180 # fail if command has no output for 3 minutes
-
-  # we automatically cache and restore many dependencies between
-  # builds. If you need to, you can add custom paths to cache:
-  cache_directories:
-    - "custom_1"   # relative to the build directory
-    - "~/custom_2" # relative to the user's home directory
-
-## Customize database setup
-database:
-  override:
-    # replace CircleCI's generated database.yml
-    - cp config/database.yml.ci config/database.yml
-    - bundle exec rake db:create db:schema:load
-
-## Customize test commands
 test:
+  pre:
+    - android list targets
+    - echo no | android create avd -n emulatorwithgoogleapi22 -t 9 --abi google_apis/armeabi-v7a
+    - echo 'vm.heapSize=512' >> ~/.android/avd/emulatorwithgoogleapi22.ini
+    - echo 'hw.ramSize=1024' >> ~/.android/avd/emulatorwithgoogleapi22.ini
+    - cat ~/.android/avd/emulatorwithgoogleapi22.ini
+    - emulator -avd emulatorwithgoogleapi22 -no-audio -no-window :
+        background: true
+        parallel: true
+    - circle-android wait-for-boot
+    - adb shell input keyevent 82
+    - adb shell svc power stayon true
+    - adb shell settings put global window_animation_scale 0
+    - adb shell settings put global transition_animation_scale 0
+    - adb shell settings put global animator_duration_scale 0
+
   override:
-    - phpunit test/unit-tests # use PHPunit for testing
+    - ./gradlew assemble
+        - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+
   post:
-    - bundle exec rake jasmine:ci: # add an extra test type
-        environment:
-          RAILS_ENV: test
-          RACK_ENV: test
-
-## Customize deployment commands
-deployment:
-  staging:
-    branch: master
-    heroku:
-      appname: foo-bar-123
-
-## Custom notifications
-notify:
-  webhooks:
-    # A list of hashes representing hooks. Only the url field is supported.
-    - url: https://someurl.com/hooks/circle
+    - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+    - cp -r app/build/outputs/androidTest-results/ $CIRCLE_TEST_REPORTS
+    - cp -r app/build/reports/coverage/ $CIRCLE_TEST_REPORTS
+    - cp -r app/build/test-results/mockDebug/ $CIRCLE_TEST_REPORTS
